@@ -1,12 +1,14 @@
+DROP TABLE IF EXISTS sessions;
+DROP TABLE IF EXISTS users;
+
 CREATE TABLE users
 (
-	id INT NOT NULL UNIQUE,
+	id SERIAL NOT NULL UNIQUE PRIMARY KEY,
 	name TEXT NOT NULL UNIQUE,
 	a_secret TEXT NOT NULL,
 	a_type SMALLINT NOT NULL,
 	expire TIMESTAMP NOT NULL,
-	active SMALLINT,
-	PRIMARY KEY(id, name)
+	active SMALLINT
 );
 CREATE TABLE sessions
 (
@@ -19,4 +21,3 @@ CREATE TABLE sessions
 			REFERENCES users(id) 
 				ON DELETE SET NULL
 );
-
