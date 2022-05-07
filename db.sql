@@ -1,0 +1,22 @@
+CREATE TABLE users
+(
+	id INT NOT NULL UNIQUE,
+	name TEXT NOT NULL UNIQUE,
+	a_secret TEXT NOT NULL,
+	a_type SMALLINT NOT NULL,
+	expire TIMESTAMP NOT NULL,
+	active SMALLINT,
+	PRIMARY KEY(id, name)
+);
+CREATE TABLE sessions
+(
+	UUID UUID NOT NULL,
+	users_id INT,
+	expire TIMESTAMP NOT NULL,
+	PRIMARY KEY(UUID),
+	CONSTRAINT fk_users_id 
+		FOREIGN KEY(users_id) 
+			REFERENCES users(id) 
+				ON DELETE SET NULL
+);
+
