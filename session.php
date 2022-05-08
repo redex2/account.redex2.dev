@@ -67,8 +67,8 @@
 			if($n!==1)return -2;//it's impossible... theoretically
 			else 
 			{
-				if($type)setcookie("user", $uuid, time() + (86400 * 30), "/");
-				else setcookie("user", $uuid, time() + 300, "/");
+				if($type)setcookie("user", $uuid, time() + (86400 * 30), "/", get_domain(), true, true);
+				else setcookie("user", $uuid, time() + 300, "/", get_domain(), true, true);
 				return 1;//correct
 			}
 		}
@@ -91,7 +91,7 @@
 		{
 			if(!isset($_COOKIE['user']))return -1;
 			$uuid=$_COOKIE['user'];
-			setcookie("user", null, -1, "/");
+			setcookie("user", null, -1, "/", get_domain(), true, true);
 			try
 			{
 				$out = $pdo->exec("UPDATE sessions SET expire = NOW(), users_id = NULL WHERE uuid='$uuid';"); //set expire to now and uid to null
@@ -112,7 +112,7 @@
 			$n=0;//row return counter
 			try
 			{
-				$out = $pdo->query("UPDATE sessions SET uuid = gen_random_uuid() AND WHERE uuid='$o_uuid' RETURNING uuid;");//try change uuid new session
+				$out = $pdo->query("UPDATE sessions SET uuid = gen_random_uuid() WHERE uuid='$o_uuid' RETURNING uuid;");//try change uuid new session
 			}
 			catch(PDOException $e)
 			{
@@ -136,7 +136,7 @@
 			if($n!==1)return -2;//it's impossible... theoretically
 			else 
 			{
-				setcookie("user", $uuid, time() + (86400 * 30), "/");
+				setcookie("user", $uuid, time() + (86400 * 30), "/", get_domain(), true, true);
 				return 1;//correct
 			}
 		}
