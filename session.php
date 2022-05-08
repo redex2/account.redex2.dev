@@ -12,7 +12,7 @@
 			$n=0;//row return counter
 			try
 			{
-				$out = $pdo->query("SELECT users_id FROM sessions WHERE expire > NOW() AND uuid='$uuid';");
+				$out = $pdo->query("SELECT users_id FROM sessions WHERE expire > NOW() AND uuid='$uuid' AND users_id IS NOT NULL;");
 			}
 			catch(PDOException $e)
 			{
@@ -94,7 +94,7 @@
 			setcookie("user", null, -1, "/", get_domain(), true, true);
 			try
 			{
-				$out = $pdo->exec("UPDATE sessions SET expire = NOW(), users_id = NULL WHERE uuid='$uuid';"); //set expire to now and uid to null
+				$out = $pdo->exec("DELETE FROM sessions WHERE uuid='$uuid';"); //delete session
 			}
 			catch(PDOException $e)
 			{
