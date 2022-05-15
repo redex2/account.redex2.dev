@@ -1,11 +1,13 @@
 <?php
+	require_once(__DIR__."/session.php");
 	class ACCOUNT
 	{
+		private $session=null;
 		private $unchar="0123456789abc";
-		private $unchar_len=0;
+		private $unchar_len=null;
 		private $unlen=6;//user name length
 		private $base32="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-		private $base32_len=0;
+		private $base32_len=null;
 		private $un_chars_org=[];
 		private $un_chars=[];
 		private $base32_char_list = [
@@ -46,6 +48,7 @@
 		private function __construct() {
 			$unchar_len=strlen($unchar);
 			$base32_len=strlen($base32);
+			$session=new SESSION();
 		}
 		private function gen_ramdom_user_name()
 		{
@@ -62,7 +65,7 @@
 				$un_chars[$i]+=$shift;
 				$shift=0;
 				$shift=floor($un_chars[$i]/$unchar_len);
-				$un_chars[$i]=$un_chars[$i]%$unchar_len
+				$un_chars[$i]=$un_chars[$i]%$unchar_len;
 			}
 			for($i=0;$i<$unlen;$i++)$un_chars_org[$i]=rand(0, $unchar_len-1);
 			$un_chars=$un_chars_org;
