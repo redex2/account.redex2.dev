@@ -6,7 +6,7 @@
 		private $unchar="0123456789abc";
 		private $unchar_len=null;
 		private $unlen=6;//user name length
-		private $base32="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+		public $base32="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 		private $base32_len=null;
 		private $un_chars_org=[];
 		private $un_chars=[];
@@ -45,42 +45,40 @@
 			'6' => 0b11110,
 			'7' => 0b11111,
 		];
-		private function __construct() {
-			$unchar_len=strlen($unchar);
-			$base32_len=strlen($base32);
-			$session=new SESSION();
+		function __construct() {
+			$this->unchar_len=strlen($this->unchar);
+			$this->base32_len=strlen($this->base32);
+			$this->session=new SESSION();
 		}
 		private function gen_ramdom_user_name()
 		{
 			$un_chars_org=[];
-			for($i=0;$i<$unlen;$i++)$un_chars_org[$i]=rand(0, $unchar_len-1);
-			$un_chars=$un_chars_org;
+			for($i=0;$i<$this->unlen;$i++)$this->un_chars_org[$i]=rand(0, $this->unchar_len-1);
+			$this->un_chars=$this->un_chars_org;
 		}
 		private function next_user_name()
 		{
 			$shift=0;
-			$un_chars[$unlen-1]++;
-			for($i=$unlen-1;$i>=0;$i--)
+			$this->un_chars[$this->unlen-1]++;
+			for($i=$this->unlen-1;$i>=0;$i--)
 			{
-				$un_chars[$i]+=$shift;
+				$this->un_chars[$i]+=$shift;
 				$shift=0;
-				$shift=floor($un_chars[$i]/$unchar_len);
-				$un_chars[$i]=$un_chars[$i]%$unchar_len;
+				$shift=floor($this->un_chars[$i]/$this->unchar_len);
+				$this->un_chars[$i]=$this->un_chars[$i]%$this->unchar_len;
 			}
-			for($i=0;$i<$unlen;$i++)$un_chars_org[$i]=rand(0, $unchar_len-1);
-			$un_chars=$un_chars_org;
 		}
 		private function return_user_name()
 		{
 			$un="";
-			for($i=0;$i<$unlen;$i++)$un.=$unchar[$un_chars[$i]];
+			for($i=0;$i<$this->unlen;$i++)$un.=$this->unchar[$this->un_chars[$i]];
 			return $un;
 		}
 		
 		private function gen_secret()
 		{
 			$s="";
-			for ($i = 0; $i < 16; $i++) $s .= $base32[rand(0, $base32_len - 1)];
+			for ($i = 0; $i < 16; $i++) $s .= $this->base32[rand(0, $this->base32_len - 1)];
 			return $s;
 		}
 		private function base32_decode($input)
@@ -89,11 +87,11 @@
 			if($input=="") return "";
 			$in_len=strlen($input);
 			if($in_len%8!==0) return -2;
-			$bin=$base32_char_list[$input[0]];
+			$bin=$this->base32_char_list[$input[0]];
 			for($i=1;$i<$in_len;$i++)
 			{
 				$bin=$bin<<5;
-				$bin|=$base32_char_list[$input[$i]];
+				$bin|=$this->base32_char_list[$input[$i]];
 			}
 			return pack('H*',base_convert($bin, 10, 16));
 		}
@@ -108,6 +106,12 @@
 				| ($hmac_result[$offset+2] & 0xff) << 8
 				| ($hmac_result[$offset+3] & 0xff);
 			return str_pad($bin_code%1000000, 6, "0", STR_PAD_LEFT);
+		}
+		
+		public function create_user()
+		{
+			$this->gen_ramdom_user_name();
+			return array("name" => $this->return_user_name(), "key" => $this->gen_secret());
 		}
 	}
 ?>
